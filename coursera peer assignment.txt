@@ -1,0 +1,559 @@
+Part 1: Yelp Dataset Profiling and Understanding
+
+1.) Total number of records for each of the tables are as follows:-
+	
+i. Attribute table =10000
+ii. Business table =10000
+iii. Category table =10000
+iv. Checkin table =10000
+v. elite_years table =10000
+vi. friend table = 10000
+vii. hours table =10000
+viii. photo table = 10000
+ix. review table = 10000
+x. tip table = 10000
+xi. user table =10000
+
+SQL CODE:-
+
+select count(*)  -- counting the number of records from the table user
+from user        --Code will be common for all tables only table names will be changed
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2.) Find the total distinct records by either the foreign key or primary key for each table. If two foreign keys are listed in the table, please specify which foreign key.
+
+i. Business = 10000 (Distinct records is with the help of primary key i.e. (id) in business table
+ii. Hours = 1562 (Distinct records with foreign key i.e. (business_id))
+iii. Category = 2643 (Distinct records with foreign key i.e. (business_id))
+iv. Attribute = 1115 (Distinct records with foreign key i.e. (business_id))
+v. Review = 9581 (Distinct records with foreign key i.e. (user_id). There are 2 foreign key in review table so this distinct records are with help of (user_id) foreign key.
+vi. Checkin = 493 ((Distinct records is with the help of foreign key i.e. (business_id) in checkin table
+vii. Photo = 6493 (Distinct records with foreign key i.e. (business_id) and 10000 (Distinct records is with the help of primary key i.e. (id) )
+viii. Tip = 537 (Distinct records with foreign key i.e. (user_id). There are 2 foreign key in review table so this distinct records are with help of (user_id) foreign key.
+ix. User = 10000 (Distinct records is with the help of primary key i.e. (id) in user table
+x. Friend = 11 (Distinct records with foreign key i.e. (user_id))
+xi. Elite_years = 2780 (Distinct records with foreign key i.e. (user_id))
+
+SQL query for 1 table i.e. hours table
+
+select count(distinct business_id) --counting distinct records in the table named hours
+from hours
+
+Output:-
+
++-----------------------------+
+| count(distinct business_id) |
++-----------------------------+
+|                        1562 |
++-----------------------------+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3.) Are there any columns with null values in the Users table? Indicate "yes," or "no."
+
+Answer: No there is no null values in any column in the users table
+        
+SQL code used to arrive at answer:
+
+select *
+from user
+where id is null or name is null or review_count is null or yelping_since is null
+or useful is null or funny is null or cool is null or fans is null or average_stars is null
+or compliment_hot is null or compliment_more is null or compliment_profile is null 
+or compliment_cute is null or compliment_list is null or compliment_note is null
+or compliment_plain is null or compliment_cool is null or compliment_funny
+or compliment_writer is null or compliment_photos is null;
+-- finding null values in any of the columns in the table
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4.) For each table and column listed below, display the smallest (minimum), largest (maximum), and average (mean) value for the following fields:
+
+i) Table: Review, Column: Stars
+	 
+min: 1         max: 5	       avg: 3.7082
+
+SQL QUERY:-
+
+select min(stars) as minimum -- using aggregate function to find minimum value
+,max(stars) as maximum -- using aggregate function to find maximum value
+,avg(stars) average -- using aggregate function to find average value
+from review
+
+ii. Table: Business, Column: Stars
+	
+min: 1.0	max: 5.0	avg: 3.6549
+
+SQL QUERY:-
+
+select min(stars) as minimum -- using aggregate function to find minimum value
+,max(stars) as maximum -- using aggregate function to find maximum value
+,avg(stars) average -- using aggregate function to find average value
+from business
+		
+	
+iii. Table: Tip, Column: Likes
+	
+min: 0	         max: 2		 avg: 0.0144
+
+SQL QUERY:-
+
+select min(likes) as minimum 
+,max(likes) as maximum 
+,avg(likes) average 
+from tip
+	
+iv. Table: Checkin, Column: Count
+	
+min: 1		max: 53		avg: 1.9414
+
+SQL QUERY:-
+
+select min(count) as minimum 
+,max(count) as maximum 
+,avg(count) average 
+from checkin
+		
+	
+v. Table: User, Column: Review_count
+	
+min: 0		max: 2000	 avg: 24.2995
+
+SQL QUERY:-
+
+select min(review_count) as minimum 
+,max(review_count) as maximum 
+,avg(review_count) average 
+from user
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5.) List the cities with the most reviews in descending order:
+
+SQL code used to arrive at answer:
+
+-- Counting reviews for each city
+select b.city,count(*) as review_count 
+from business b 
+join review r  -- joining review table to business table with foreign key as (id)
+on b.id = r.id
+group by b.city --grouping city so that review count comes for particular city
+order by review_count desc	
+	
+Copy and Paste the Result Below:
+
++-------------+--------------+
+|city         | review_count |
++-------------+--------------+
+| Las Vegas   |            3 |
+| Phoenix     |            2 |
+| Belmont     |            1 |
+| Brook Park  |            1 |
+| Champaign   |            1 |
+| Gastonia    |            1 |
+| Macedonia   |            1 |
+| Madison     |            1 |
+| Peoria      |            1 |
+| Scarborough |            1 |
+| Tempe       |            1 |
++-------------+--------------+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6.) Find the distribution of star ratings to the business in the following cities:
+
+i. Avon
+
+SQL code used to arrive at answer:
+
+-- Retrieve the star ratings and count of businesses for a specific city
+SELECT stars as star_rating, COUNT(*) as business_count
+FROM business
+WHERE city IN ('Avon') -- Filter the businesses for the specified city
+GROUP BY city, stars -- Group the records by city and star rating
+ORDER BY city, stars; -- Order the result by city and star rating
+
+Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
+
++-------------+----------------+
+| star_rating | business_count |
++-------------+----------------+
+|         1.5 |              1 |
+|         2.5 |              2 |
+|         3.5 |              3 |
+|         4.0 |              2 |
+|         4.5 |              1 |
+|         5.0 |              1 |
++-------------+----------------+
+
+
+ii. Beachwood
+
+SQL code used to arrive at answer:
+
+SELECT stars as star_rating, COUNT(*) AS business_count
+FROM business
+WHERE city IN ('Beachwood')
+GROUP BY city, stars
+ORDER BY city, stars;
+
+
+Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
+
++-------------+----------------+
+| star_rating | business_count |
++-------------+----------------+
+|         2.0 |              1 |
+|         2.5 |              1 |
+|         3.0 |              2 |
+|         3.5 |              2 |
+|         4.0 |              1 |
+|         4.5 |              2 |
+|         5.0 |              5 |
++-------------+----------------+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+7.) Find the top 3 users based on their total number of reviews:
+		
+SQL code used to arrive at answer:
+
+select name as name_of_user, review_count
+from user
+order by review_count desc -- arranging the result in descending order
+limit 3 -- as we want only top 3 users so limit function is used for that
+	
+		
+Copy and Paste the Result Below:
+
++--------------+--------------+
+| name_of_user | review_count |
++--------------+--------------+
+| Gerald       |         2000 |
+| Sara         |         1629 |
+| Yuri         |         1339 |
++--------------+--------------+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+8.) Does posing more reviews correlate with more fans?
+
+Basically according to the data provided posting more reviews does not correlate to more fans and we cannot find any meaningful relation
+between number of reviews by user and number of fans. 
+
+For more clarity below is the SQL query to find the relation between review_count and fans:-
+
+select name,review_count,fans -- fetching name,review_count and number of fans from user table
+from user
+order by review_count desc
+limit 10
+
+Result:-
+Below result cannot correlate that if user posts more reviews then user will have more fans
+
++-----------+--------------+------+
+| name      | review_count | fans |
++-----------+--------------+------+
+| Gerald    |         2000 |  253 |
+| Sara      |         1629 |   50 |
+| Yuri      |         1339 |   76 |
+| .Hon      |         1246 |  101 |
+| William   |         1215 |  126 |
+| Harald    |         1153 |  311 |
+| eric      |         1116 |   16 |
+| Roanna    |         1039 |  104 |
+| Mimi      |          968 |  497 |
+| Christine |          930 |  173 |
++-----------+--------------+------+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+9.) Are there more reviews with the word "love" or with the word "hate" in them?
+
+Answer: There are total 1780 reviews with word love and 232 reviews with word hate
++------------+------------+
+| love_count | hate_count |
++------------+------------+
+|       1780 |        232 |
++------------+------------+
+
+	
+SQL code used to arrive at answer:
+
+SELECT
+    SUM(CASE WHEN text LIKE '%love%' THEN 1 ELSE 0 END) AS love_count, -- counting the number of reviews in text with word love in them with case statement
+    SUM(CASE WHEN text LIKE '%hate%' THEN 1 ELSE 0 END) AS hate_count  -- counting the number of reviews in text with word hate in them with case statement
+FROM
+    review;
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10.) Find the top 10 users with the most fans:
+
+SQL code used to arrive at answer:
+
+select name,fans -- selecting name of the user and there fans number
+from user
+order by fans desc -- ordering number of fans in descending order
+limit 10; -- only top 10 most fans are required so limiting result to 10 rows 
+	
+	
+Copy and Paste the Result Below:
+
++-----------+------+
+| name      | fans |
++-----------+------+
+| Amy       |  503 |
+| Mimi      |  497 |
+| Harald    |  311 |
+| Gerald    |  253 |
+| Christine |  173 |
+| Lisa      |  159 |
+| Cat       |  133 |
+| William   |  126 |
+| Fran      |  124 |
+| Lissa     |  120 |
++-----------+------+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Part 2: Inferences and Analysis
+
+1.) Pick one city and category of your choice and group the businesses in that city or category by their overall star rating.
+    Compare the businesses with 2-3 stars to the businesses with 4-5 stars and answer the following questions.Include your code.
+ 	
+   - I have selected city as 'Chandler' and category as 'Bars' for the comparision purpose
+
+
+-SQL QUERY:-
+
+SELECT                         
+    h.hours AS business_hours,
+    COUNT(*) AS business_count,
+    AVG(b.review_count) AS avg_review_count
+FROM
+    business b
+JOIN
+    hours h on b.id = h.business_id
+JOIN
+    category c ON b.id = c.business_id
+WHERE
+    b.city = 'Chandler' AND c.category = 'Bars' AND b.stars >= 2 AND b.stars <= 3
+GROUP BY
+    h.hours;
+
+
+-OUTPUT:-
+
++----------------------+----------------+------------------+
+| business_hours       | business_count | avg_review_count |
++----------------------+----------------+------------------+
+| Friday|11:00-2:30    |              1 |            141.0 |
+| Monday|11:00-0:30    |              1 |            141.0 |
+| Saturday|9:00-2:30   |              1 |            141.0 |
+| Sunday|9:00-0:30     |              1 |            141.0 |
+| Thursday|11:00-0:30  |              1 |            141.0 |
+| Tuesday|11:00-0:30   |              1 |            141.0 |
+| Wednesday|11:00-0:30 |              1 |            141.0 |
++----------------------+----------------+------------------+
+
+SELECT                         
+    h.hours AS business_hours,
+    COUNT(*) AS business_count,
+    AVG(b.review_count) AS avg_review_count
+FROM
+    business b
+JOIN
+    hours h on b.id = h.business_id
+JOIN
+    category c ON b.id = c.business_id
+WHERE
+    b.city = 'Chandler' AND c.category = 'Bars' AND b.stars >= 4 AND b.stars <= 5
+GROUP BY
+    h.hours;
+
+
+OUTPUT:-
+
++----------------------+----------------+------------------+
+| business_hours       | business_count | avg_review_count |
++----------------------+----------------+------------------+
+| Friday|11:00-2:00    |              1 |             75.0 |
+| Monday|11:00-0:00    |              1 |             75.0 |
+| Saturday|11:00-2:00  |              1 |             75.0 |
+| Sunday|11:00-0:00    |              1 |             75.0 |
+| Thursday|11:00-0:00  |              1 |             75.0 |
+| Tuesday|11:00-0:00   |              1 |             75.0 |
+| Wednesday|11:00-0:00 |              1 |             75.0 |
++----------------------+----------------+------------------+
+
+i. Do the two groups you chose to analyze have a different distribution of hours?
+   
+   - On analysing above data and output there is no difference between the hours distribution.
+
+ii. Do the two groups you chose to analyze have a different number of reviews?
+
+   -On analysing above data and output there is difference in average number of reviews in the 2-3 star rating and 4-5 star rating business in city chandler and category bars.
+    For 2-3 star rating business average number of reviews are 141 and for 4-5 star average number of reviews are 75.
+         
+
+
+SQL code used for analysis:
+
+SELECT 
+    CASE 
+        WHEN stars >= 2 AND stars <= 3 THEN '2-3 Stars'  -- Assigns '2-3 Stars' to the star_category when stars range from 2 to 3
+        WHEN stars >= 4 AND stars <= 5 THEN '4-5 Stars'  -- Assigns '4-5 Stars' to the star_category when stars range from 4 to 5
+    END AS star_category,
+    COUNT(*) AS business_count  -- Counts the number of businesses in each star category
+FROM
+    business b 
+JOIN category c on b.id = c.business_id  -- Joins the 'business' and 'category' tables based on the common column 'id' and 'business_id'
+WHERE
+    b.city = 'Chandler' AND c.category = 'Bars'  -- Filters the businesses in Chandler city and belonging to the 'Bars' category
+GROUP BY
+    star_category;  -- Groups the result by the star_category
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2.) Group business based on the ones that are open and the ones that are closed. What differences can you find between the ones that are still open and the ones that are closed?
+    List at least two differences and the SQL code you used to arrive at your answer.
+		
+i.) Difference 1: Average rating for the business which are closed and open will make a difference
+
+SQL QUERY:-
+
+select 
+  avg(case when is_open=1 then stars end) as average_rating_open,   --finding average star rating for business that are open
+  avg(case when is_open=0 then stars end) as average_rating_closed  --finding average star rating for business that are closed
+from business
+
+
+OUTPUT:- average rating for the business that are open is more then that of businesses that are closed. Below are the results
+
++---------------------+-----------------------+
+| average_rating_open | average_rating_closed |
++---------------------+-----------------------+
+|       3.67900943396 |         3.52039473684 |
++---------------------+-----------------------+
+         
+         
+ii.) Difference 2: Number of review that given to businesses that are open compared to that are closed
+
+SQL QUERY:-
+
+select 
+  sum(case when is_open=1 then review_count end) as reviews_for_open,   --finding total number of reviews for open business
+  sum(case when is_open=0 then review_count end) as reviews_for_closed  --finding total number of reviews for open business
+from business
+
+
+OUTPUT:- There are large difference in number of reviews for open businesses then that of closed businesses
+          (reviews for open business > reviews for closed business). Below are the results
+
++------------------+--------------------+
+| reviews_for_open | reviews_for_closed |
++------------------+--------------------+
+|           269300 |              35261 |
++------------------+--------------------+         
+
+         
+SQL code used for analysis:-
+
+SELECT 
+    CASE 
+        WHEN is_open = 1 THEN 'Open'     --condition that when is_open is 1 then status of business is open
+        WHEN is_open = 0 THEN 'Closed'   --condition that when is_open is 0 then status of business is closed
+        ELSE 'Unknown'
+    END AS status,
+    COUNT(*) AS business_count           --Counting number of businesses that are open and closed
+FROM business
+GROUP BY status;                         --grouping with closed and open category
+
+
+OUTPUT:- Total number of businesses that are open and closed are below
++--------+----------------+
+| status | business_count |
++--------+----------------+
+| Closed |           1520 |
+| Open   |           8480 |
++--------+----------------+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. For this last part of your analysis, you are going to choose the type of analysis you want to conduct on the Yelp dataset and are going to prepare the data for analysis.
+
+
+	
+i.) Indicate the type of analysis you chose to do:
+  
+   My analysis is on which state has more businesses and there star ratings respectively which concludes that which state has most good star rated businesses.
+         
+         
+ii.) Write 1-2 brief paragraphs on the type of data you will need for your analysis and why you chose that data:
+  
+  I choose this simple yet critical analysis as it tells which state is most successful in terms of business, for setting up new business and also customer can know that 
+  which state has good star rating in the business which ultimately leads to good revenue for the particular state. 
+  For above analysis I would require count of number of businesses in the particular state and therir average,max and min star ratings
+                           
+                  
+iii.) Output of your finished dataset:
+ 
++----------------------+-------+---------------+---------------+---------------+
+| number_of_businesses | state | average_stars | maximum_stars | minimum_stars |
++----------------------+-------+---------------+---------------+---------------+
+|                 3042 | AZ    | 3.72156476003 |           5.0 |           1.0 |
+|                 1921 | NV    | 3.72930765226 |           5.0 |           1.0 |
+|                 1664 | ON    | 3.46544471154 |           5.0 |           1.0 |
+|                  747 | OH    | 3.58165997323 |           5.0 |           1.0 |
+|                  722 | NC    | 3.56232686981 |           5.0 |           1.0 |
+|                  553 | PA    | 3.74683544304 |           5.0 |           1.0 |
+|                  465 | QC    | 3.63870967742 |           5.0 |           1.0 |
+|                  253 | WI    | 3.70158102767 |           5.0 |           1.0 |
+|                  237 | EDH   | 3.78902953586 |           5.0 |           1.0 |
+|                  202 | BW    | 3.75495049505 |           5.0 |           1.0 |
+|                  108 | IL    | 3.50925925926 |           5.0 |           1.0 |
+|                   39 | SC    | 3.52564102564 |           5.0 |           1.5 |
+|                   12 | HLD   | 3.66666666667 |           4.5 |           2.5 |
+|                    8 | MLN   |         3.875 |           4.5 |           3.5 |
+|                    6 | ELN   | 4.16666666667 |           4.5 |           3.5 |
+|                    5 | FIF   |           3.7 |           4.5 |           2.5 |
+|                    3 | C     | 3.33333333333 |           4.5 |           2.5 |
+|                    3 | NY    |           3.5 |           4.5 |           2.5 |
+|                    3 | NYK   | 3.66666666667 |           4.0 |           3.5 |
+|                    2 | NI    |           3.0 |           3.0 |           3.0 |
+|                    2 | ST    |           5.0 |           5.0 |           5.0 |
+|                    2 | WLN   |           3.5 |           4.0 |           3.0 |
+|                    1 | ESX   |           3.5 |           3.5 |           3.5 |
++----------------------+-------+---------------+---------------+---------------+
+  
+         
+         
+iv.) Provide the SQL code you used to create your final dataset:
+
+
+select count(*) as number_of_businesses    -- counting total number of business in the particular state
+                  ,state
+                  ,avg(stars) as average_stars   --average star rating of business in state
+                  ,max(stars) as maximum_stars   --maximum star rating of business in state
+                  ,min(stars) as minimum_stars   --minimum star rating of business in state
+   from business b 
+   group by state                                 -- grouping the analysis on the basis of state
+   order by number_of_businesses desc
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
